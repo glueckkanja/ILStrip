@@ -44,7 +44,7 @@ namespace ILStrip
             TypeDefinition typeDef;
             if ((typeDef = typeRef as TypeDefinition) != null)
             {
-                var methods = typeDef.Methods;
+                var methods = typeDef.Methods.ToList();
                 var bodies = methods.Where(m => m.HasBody).Select(m => m.Body).ToList();
                 var operands = bodies.SelectMany(b => b.Instructions).Select(i => i.Operand).ToList();
 
