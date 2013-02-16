@@ -14,6 +14,8 @@ namespace ILStrip
         public string OutputFileName { get; set; }
         public int Verbose { get; set; }
 
+        public string KeepTypes { get; set; }
+
         public string KeepResources { get; set; }
         public string RemoveResources { get; set; }
 
@@ -40,6 +42,14 @@ namespace ILStrip
 
             foreach (var typeDef in allTypes.Where(t => t.IsPublic))
                 AddScanType(typeDef);
+
+            if (!string.IsNullOrEmpty(KeepTypes))
+                foreach (var typeRegEx in KeepTypes.Split(','))
+                {
+                    var regEx = new Regex(typeRegEx, RegexOptions.Compiled);
+                    foreach (var typeDef in allTypes.Where(r => regEx.IsMatch(r.FullName)))
+                        AddScanType(typeDef);
+                }
 
             Console.WriteLine("Found {0} accessible types.", _typeIdsFound.Count);
 
