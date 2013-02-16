@@ -1,6 +1,7 @@
 ﻿using Mono.Cecil;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -24,13 +25,19 @@ namespace ILStrip
         {
             Console.WriteLine("Opening assembly {0}", InputFileName);
 
-            var assembly = AssemblyDefinition.ReadAssembly(InputFileName);
+            var readWriteSymbols = File.Exists(Path.ChangeExtension(InputFileName, ".pdb"));
+
+            var assembly = AssemblyDefinition.ReadAssembly(InputFileName, new ReaderParameters { ReadSymbols = readWriteSymbols });
             var mainModule = assembly.MainModule;
             var allTypes = mainModule.Types;
             var allResources = mainModule.Resources;
 
 
             _typeIdsFound.Add("<Module>");
+
+            if (assembly.EntryPoint != null)
+                AddScanType(assembly.EntryPoint.DeclaringType);
+
             foreach (var typeDef in allTypes.Where(t => t.IsPublic))
                 AddScanType(typeDef);
 
@@ -88,7 +95,7 @@ namespace ILStrip
 
 
             Console.WriteLine("Saving assembly to {0}", OutputFileName);
-            assembly.Write(OutputFileName);
+            assembly.Write(OutputFileName, new WriterParameters { WriteSymbols = readWriteSymbols });
 
             Console.WriteLine("Done.");
 
