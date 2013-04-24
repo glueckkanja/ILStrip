@@ -18,6 +18,7 @@ namespace ILStrip
 
         public string KeepResources { get; set; }
         public string RemoveResources { get; set; }
+        public string RenameResources { get; set; }
 
         List<string> _typeIdsFound = new List<string>();
         int _addScanTypeRecursionLevel = -1;
@@ -103,6 +104,24 @@ namespace ILStrip
                 Console.WriteLine("Removed {0} resources.", removeResCount);
             }
 
+
+            if (!string.IsNullOrEmpty(RenameResources))
+            {
+                var rename = new List<Resource>();
+                foreach (var resRegex in RenameResources.Split(';'))
+                {
+                    var regex = new Regex(resRegex, RegexOptions.Compiled);
+                    rename.AddRange(mainModule.Resources.Where(x => regex.IsMatch(x.Name)));
+                }
+
+                var newAssemblyName = Path.GetFileNameWithoutExtension(OutputFileName);
+                foreach (var res in rename)
+                {
+                    res.Name = newAssemblyName + res.Name.Substring(res.Name.IndexOf('.'));
+                }
+
+                Console.WriteLine("Renamed {0} resources.", rename.Count);
+            }
 
             Console.WriteLine("Saving assembly to {0}", OutputFileName);
             assembly.Write(OutputFileName, new WriterParameters { WriteSymbols = readWriteSymbols });

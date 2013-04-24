@@ -29,6 +29,8 @@ namespace ILStrip
                         ilStrip.KeepResources = match.Groups[2].Value;
                     else if (paramName == "removeresources")
                         ilStrip.RemoveResources = match.Groups[2].Value;
+                    else if (paramName == "renameresources")
+                        ilStrip.RenameResources = match.Groups[2].Value;
                     else if (paramName == "v")
                         ilStrip.Verbose++;
                 }
@@ -41,7 +43,7 @@ namespace ILStrip
 
             if (string.IsNullOrEmpty(ilStrip.InputFileName))
             {
-                Console.Error.WriteLine("Usage: ilstrip inputfilename [/out:outputfilename] /keeptypes:regex[,regex] /keepresources:regex[,regex] /removeresources:regex[,regex]");
+                Console.Error.WriteLine("Usage: ilstrip inputfilename [/out:outputfilename] /keeptypes:regex[,regex] /keepresources:regex[,regex] /removeresources:regex[,regex] /renameresources:regex[,regex]");
                 return;
             }
 
