@@ -108,7 +108,7 @@ namespace ILStrip
             if (!string.IsNullOrEmpty(RenameResources))
             {
                 var rename = new List<Resource>();
-                foreach (var resRegex in RenameResources.Split(';'))
+                foreach (var resRegex in RenameResources.Split(','))
                 {
                     var regex = new Regex(resRegex, RegexOptions.Compiled);
                     rename.AddRange(mainModule.Resources.Where(x => regex.IsMatch(x.Name)));
