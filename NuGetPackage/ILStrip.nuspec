@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>ILStrip</id>
+    <version>1.1.0</version>
+    <authors>Glück &amp; Kanja Consulting AG</authors>
+    <licenseUrl>http://www.gnu.org/licenses/gpl.html</licenseUrl>
+    <projectUrl>https://github.com/glueckkanja/ILStrip</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>A simple tool to strip unused types/classes from a .Net assembly. Useful when ilmerge is used with large libraries - use the /internalize switch with ilmerge and afterwards have ilstrip remove types/classes that are not referenced by publicly accessible code.</description>
+  </metadata>
+  <files>
+    <file src="..\bin\ReleaseFull\ILStrip.exe" target="" />
+    <file src="ILStrip.props" target="build" />
+    <file src="ILStrip-MSBuild-Readme.txt" target="content" />
+  </files>
+</package>

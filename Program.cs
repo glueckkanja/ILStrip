@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
-namespace ILStrip
+namespace GK
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-            Console.WriteLine("ILStrip - Copyright Glück & Kanja Consulting AG 2013, see https://github.com/glueckkanja/ILStrip\r\n");
-
-
             var ilStrip = new ILStrip();
+            ilStrip.LogAction = (message) => { Console.WriteLine(message); };
 
             foreach (var arg in args)
             {
@@ -39,15 +34,16 @@ namespace ILStrip
                     ilStrip.InputFileName = arg;
                 }
             }
-            if (string.IsNullOrEmpty(ilStrip.OutputFileName)) ilStrip.OutputFileName = ilStrip.InputFileName;
-
+            
             if (string.IsNullOrEmpty(ilStrip.InputFileName))
             {
+                Console.Error.WriteLine(ilStrip.CopyrightNotice);
                 Console.Error.WriteLine("Usage: ilstrip inputfilename [/out:outputfilename] /keeptypes:regex[,regex] /keepresources:regex[,regex] /removeresources:regex[,regex] /renameresources:regex[,regex]");
-                return;
+                return 666;
             }
 
-            ilStrip.Run();
+            ilStrip.Execute();
+            return 0;
         }
     }
 }

@@ -1,18 +1,21 @@
-﻿using Mono.Cecil;
+﻿using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+using Mono.Cecil;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
-namespace ILStrip
+namespace GK
 {
-    class ILStrip
+    public class ILStrip : Task
     {
+        public string CopyrightNotice { get { return "ILStrip - Copyright Glück & Kanja Consulting AG 2013, see https://github.com/glueckkanja/ILStrip\r\n"; } }
+
+        [Required]
         public string InputFileName { get; set; }
         public string OutputFileName { get; set; }
-        public int Verbose { get; set; }
 
         public string KeepTypes { get; set; }
 
@@ -20,13 +23,31 @@ namespace ILStrip
         public string RemoveResources { get; set; }
         public string RenameResources { get; set; }
 
+        public Action<string> LogAction { get; set; }
+        public int Verbose { get; set; }
+
         List<string> _typeIdsFound = new List<string>();
         int _addScanTypeRecursionLevel = -1;
         Regex _typeIdRootRegEx = new Regex(@".*?`\d+", RegexOptions.Compiled);
 
-        public void Run()
+
+        public ILStrip() : base()
         {
-            Console.WriteLine("Opening assembly {0}", InputFileName);
+            LogAction = ((message) => { Log.LogMessage(Microsoft.Build.Framework.MessageImportance.High, message); });
+        }
+
+        public override bool Execute()
+        {
+            LogAction(CopyrightNotice);
+
+            if (string.IsNullOrEmpty(OutputFileName))
+                OutputFileName = InputFileName;
+
+            if (!Directory.Exists(Path.GetDirectoryName(OutputFileName)))
+                Directory.CreateDirectory(Path.GetDirectoryName(OutputFileName));
+
+            
+            LogAction(string.Format("Opening assembly {0}", InputFileName));
 
             var readWriteSymbols = File.Exists(Path.ChangeExtension(InputFileName, ".pdb"));
 
@@ -52,7 +73,7 @@ namespace ILStrip
                         AddScanType(typeDef);
                 }
 
-            Console.WriteLine("Found {0} accessible types.", _typeIdsFound.Count);
+            LogAction(string.Format("Found {0} accessible types.", _typeIdsFound.Count));
 
 
             var removeTypeCount = 0;
@@ -60,12 +81,12 @@ namespace ILStrip
 
             foreach (var typeDef in allTypes.Where(t => !typeIdRoots.Contains(t.FullName)).ToList())
             {
-                if (Verbose >= 2) Console.WriteLine("Removing: {0}", typeDef);
+                if (Verbose >= 2) LogAction(string.Format("Removing: {0}", typeDef));
                 allTypes.Remove(typeDef);
                 removeTypeCount++;
             }
 
-            Console.WriteLine("Removed {0} inaccessible types.", removeTypeCount);
+            LogAction(string.Format("Removed {0} inaccessible types.", removeTypeCount));
 
 
             IEnumerable<Resource> removeResources = null;
@@ -96,12 +117,12 @@ namespace ILStrip
                 
                 foreach (var removeRes in removeResources.ToList())
                 {
-                    if (Verbose >= 2) Console.WriteLine("Removing: {0}", removeRes);
+                    if (Verbose >= 2) LogAction(string.Format("Removing: {0}", removeRes));
                     allResources.Remove(removeRes);
                     removeResCount++;
                 }
                 
-                Console.WriteLine("Removed {0} resources.", removeResCount);
+                LogAction(string.Format("Removed {0} resources.", removeResCount));
             }
 
 
@@ -120,14 +141,15 @@ namespace ILStrip
                     res.Name = newAssemblyName + res.Name.Substring(res.Name.IndexOf('.'));
                 }
 
-                Console.WriteLine("Renamed {0} resources.", rename.Count);
+                LogAction(string.Format("Renamed {0} resources.", rename.Count));
             }
 
-            Console.WriteLine("Saving assembly to {0}", OutputFileName);
+            LogAction(string.Format("Saving assembly to {0}", OutputFileName));
             assembly.Write(OutputFileName, new WriterParameters { WriteSymbols = readWriteSymbols });
 
-            Console.WriteLine("Done.");
+            LogAction("Done.");
 
+            return true;
         }
 
         void AddScanType(TypeReference typeRef)
@@ -138,7 +160,7 @@ namespace ILStrip
 
 
             _addScanTypeRecursionLevel++;
-            if (Verbose >= 1) Console.WriteLine(string.Format("Processing: {0}{1}", "".PadRight(_addScanTypeRecursionLevel * 2), typeRef.FullName));
+            if (Verbose >= 1) LogAction(string.Format("Processing: {0}{1}", "".PadRight(_addScanTypeRecursionLevel * 2), typeRef.FullName));
 
             _typeIdsFound.Add(typeRef.FullName);
 

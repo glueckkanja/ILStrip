@@ -6,11 +6,13 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ILStrip")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription(@"A simple tool to strip unused types/classes from a .Net assembly. 
+Useful when ilmerge is used with large libraries - use the /internalize switch with ilmerge and 
+afterwards have ilstrip remove types/classes that are not referenced by publicly accessible code.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Glück & Kanja Consulting AG")]
 [assembly: AssemblyProduct("ILStrip")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyCopyright("Copyright © 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +34,4 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.1.0")]
