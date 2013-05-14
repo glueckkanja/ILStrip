@@ -55,6 +55,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuildTaskBase.cs" />
+    <Compile Include="externals\GK.ProcessHost\ProcessHost.cs" />
+    <Compile Include="ILMerge.cs" />
     <Compile Include="ILStrip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

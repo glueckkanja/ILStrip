@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace GK
@@ -8,7 +9,7 @@ namespace GK
         static int Main(string[] args)
         {
             var ilStrip = new ILStrip();
-            ilStrip.LogAction = (message) => { Console.WriteLine(message); };
+            ilStrip.LogLine = (format, arg) => { Console.WriteLine(format, arg); };
 
             foreach (var arg in args)
             {

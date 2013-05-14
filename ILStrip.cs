@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace GK
 {
-    public class ILStrip : Task
+    public class ILStrip : BuildTaskBase
     {
         public string CopyrightNotice { get { return "ILStrip - Copyright Glück & Kanja Consulting AG 2013, see https://github.com/glueckkanja/ILStrip\r\n"; } }
 
@@ -23,7 +23,6 @@ namespace GK
         public string RemoveResources { get; set; }
         public string RenameResources { get; set; }
 
-        public Action<string> LogAction { get; set; }
         public int Verbose { get; set; }
 
         List<string> _typeIdsFound = new List<string>();
@@ -31,14 +30,9 @@ namespace GK
         Regex _typeIdRootRegEx = new Regex(@".*?`\d+", RegexOptions.Compiled);
 
 
-        public ILStrip() : base()
-        {
-            LogAction = ((message) => { Log.LogMessage(Microsoft.Build.Framework.MessageImportance.High, message); });
-        }
-
         public override bool Execute()
         {
-            LogAction(CopyrightNotice);
+            LogLine(CopyrightNotice);
 
             if (string.IsNullOrEmpty(OutputFileName))
                 OutputFileName = InputFileName;
@@ -47,7 +41,7 @@ namespace GK
                 Directory.CreateDirectory(Path.GetDirectoryName(OutputFileName));
 
             
-            LogAction(string.Format("Opening assembly {0}", InputFileName));
+            LogLine("Opening assembly {0}", InputFileName);
 
             var readWriteSymbols = File.Exists(Path.ChangeExtension(InputFileName, ".pdb"));
 
@@ -73,7 +67,7 @@ namespace GK
                         AddScanType(typeDef);
                 }
 
-            LogAction(string.Format("Found {0} accessible types.", _typeIdsFound.Count));
+            LogLine("Found {0} accessible types.", _typeIdsFound.Count);
 
 
             var removeTypeCount = 0;
@@ -81,12 +75,12 @@ namespace GK
 
             foreach (var typeDef in allTypes.Where(t => !typeIdRoots.Contains(t.FullName)).ToList())
             {
-                if (Verbose >= 2) LogAction(string.Format("Removing: {0}", typeDef));
+                if (Verbose >= 2) LogLine("Removing: {0}", typeDef);
                 allTypes.Remove(typeDef);
                 removeTypeCount++;
             }
 
-            LogAction(string.Format("Removed {0} inaccessible types.", removeTypeCount));
+            LogLine("Removed {0} inaccessible types.", removeTypeCount);
 
 
             IEnumerable<Resource> removeResources = null;
@@ -117,12 +111,12 @@ namespace GK
                 
                 foreach (var removeRes in removeResources.ToList())
                 {
-                    if (Verbose >= 2) LogAction(string.Format("Removing: {0}", removeRes));
+                    if (Verbose >= 2) LogLine("Removing: {0}", removeRes);
                     allResources.Remove(removeRes);
                     removeResCount++;
                 }
                 
-                LogAction(string.Format("Removed {0} resources.", removeResCount));
+                LogLine("Removed {0} resources.", removeResCount);
             }
 
 
@@ -141,13 +135,13 @@ namespace GK
                     res.Name = newAssemblyName + res.Name.Substring(res.Name.IndexOf('.'));
                 }
 
-                LogAction(string.Format("Renamed {0} resources.", rename.Count));
+                LogLine("Renamed {0} resources.", rename.Count);
             }
 
-            LogAction(string.Format("Saving assembly to {0}", OutputFileName));
+            LogLine("Saving assembly to {0}", OutputFileName);
             assembly.Write(OutputFileName, new WriterParameters { WriteSymbols = readWriteSymbols });
 
-            LogAction("Done.");
+            LogLine("Done.");
 
             return true;
         }
@@ -160,7 +154,7 @@ namespace GK
 
 
             _addScanTypeRecursionLevel++;
-            if (Verbose >= 1) LogAction(string.Format("Processing: {0}{1}", "".PadRight(_addScanTypeRecursionLevel * 2), typeRef.FullName));
+            if (Verbose >= 1) LogLine("Processing: {0}{1}", "".PadRight(_addScanTypeRecursionLevel * 2), typeRef.FullName);
 
             _typeIdsFound.Add(typeRef.FullName);
 
