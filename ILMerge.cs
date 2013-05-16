@@ -40,12 +40,12 @@ namespace GK
             }
 
             var ilmSearchPath = Path.GetFullPath(Path.Combine(Assembly.GetExecutingAssembly().Location, "..", ".."));
-            var ilMergePath = Directory.GetFiles(ilmSearchPath, "ilmerge.exe", SearchOption.AllDirectories).Max(x => x);
+            var ilMergePath = Directory.GetFiles(ilmSearchPath, "ilmerge.exe", SearchOption.AllDirectories).Max();
 
             var args = new StringBuilder();
             
             if (SearchDirectories != null && SearchDirectories.Length > 0)
-                args.Append(string.Join("", SearchDirectories.Select(x => string.Format(@" /lib:""{0}""", x))));
+                args.Append(string.Join("", SearchDirectories.Select(x => string.Format(@" /lib:""{0}""", x.TrimEnd('\\')))));
             
             if (Log)
                 args.Append(" /log");

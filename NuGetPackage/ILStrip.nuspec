@@ -7,11 +7,13 @@
     <licenseUrl>http://www.gnu.org/licenses/gpl.html</licenseUrl>
     <projectUrl>https://github.com/glueckkanja/ILStrip</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>A simple tool to strip unused types/classes from a .Net assembly. Useful when ilmerge is used with large libraries - use the /internalize switch with ilmerge and afterwards have ilstrip remove types/classes that are not referenced by publicly accessible code.</description>
+    <summary>A simple tool to strip unused types/classes/resources from a .Net assembly.</summary>
+    <description>Useful when ILMerge is used with large libraries - use the internalize function with ILMerge and afterwards have ILStrip remove types/classes/resources that are not referenced by publicly accessible code.
+Includes MSBuild Tasks for ILMerge and ILStrip (see included ILStripReadme.txt)</description>
   </metadata>
   <files>
     <file src="..\bin\ReleaseFull\ILStrip.exe" target="" />
     <file src="ILStrip.props" target="build" />
-    <file src="ILStrip-MSBuild-Readme.txt" target="content" />
+    <file src="ILStripReadme.txt" target="content" />
   </files>
 </package>

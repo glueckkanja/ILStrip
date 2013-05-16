@@ -60,7 +60,7 @@ namespace GK
                 AddScanType(typeDef);
 
             if (!string.IsNullOrEmpty(KeepTypes))
-                foreach (var typeRegEx in KeepTypes.Split(','))
+                foreach (var typeRegEx in KeepTypes.Split(',', ';'))
                 {
                     var regEx = new Regex(typeRegEx, RegexOptions.Compiled);
                     foreach (var typeDef in allTypes.Where(r => regEx.IsMatch(r.FullName)))
@@ -88,7 +88,7 @@ namespace GK
             if (!string.IsNullOrEmpty(KeepResources))
             {
                 var keep = new List<Resource>();
-                foreach (var resRegEx in KeepResources.Split(','))
+                foreach (var resRegEx in KeepResources.Split(',', ';'))
                 {
                     var regEx = new Regex(resRegEx, RegexOptions.Compiled);
                     keep = keep.Concat(mainModule.Resources.Where(r => regEx.IsMatch(r.Name))).ToList();
@@ -98,7 +98,7 @@ namespace GK
             
             else if (!string.IsNullOrEmpty(RemoveResources))
             {
-                foreach (var resRegEx in RemoveResources.Split(','))
+                foreach (var resRegEx in RemoveResources.Split(',', ';'))
                 {
                     var regEx = new Regex(resRegEx, RegexOptions.Compiled);
                     removeResources = (removeResources ?? new List<Resource>()).Concat(allResources.Where(r => regEx.IsMatch(r.Name)));
@@ -123,7 +123,7 @@ namespace GK
             if (!string.IsNullOrEmpty(RenameResources))
             {
                 var rename = new List<Resource>();
-                foreach (var resRegex in RenameResources.Split(','))
+                foreach (var resRegex in RenameResources.Split(',', ';'))
                 {
                     var regex = new Regex(resRegex, RegexOptions.Compiled);
                     rename.AddRange(mainModule.Resources.Where(x => regex.IsMatch(x.Name)));
