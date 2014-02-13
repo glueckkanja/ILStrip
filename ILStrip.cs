@@ -111,7 +111,7 @@ namespace GK
                 
                 foreach (var removeRes in removeResources.ToList())
                 {
-                    if (Verbose >= 2) LogLine("Removing: {0}", removeRes);
+                    if (Verbose >= 2) LogLine("Removing: {0}", removeRes.Name);
                     allResources.Remove(removeRes);
                     removeResCount++;
                 }
