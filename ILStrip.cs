@@ -26,7 +26,7 @@ namespace GK
 
         HashSet<string> _typeIdsFound = new HashSet<string>();
         int _addScanTypeRecursionLevel = -1;
-        Regex _typeIdRootRegEx = new Regex(@"((.+)`\d+)", RegexOptions.Compiled);
+        Regex _typeIdRootRegEx = new Regex(@"((.+?)`\d+)", RegexOptions.Compiled);
 
 
         public override bool Execute()
