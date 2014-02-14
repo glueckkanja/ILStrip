@@ -224,7 +224,7 @@ namespace GK
             Match match = _typeIdRootRegEx.Match(input);
 
             if (match.Success)
-                return stripCount ? match.Groups[1].Value : match.Groups[2].Value;
+                return stripCount ? match.Groups[2].Value : match.Groups[1].Value;
 
             return input;
         }
