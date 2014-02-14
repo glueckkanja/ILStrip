@@ -28,6 +28,8 @@ namespace GK
         int _addScanTypeRecursionLevel = -1;
         Regex _typeIdRootRegEx = new Regex(@"((.+?)`\d+)", RegexOptions.Compiled);
 
+        private static readonly string SysAttributeName = typeof (Attribute).FullName;
+
 
         public override bool Execute()
         {
@@ -55,7 +57,7 @@ namespace GK
             if (assembly.EntryPoint != null)
                 AddScanType(assembly.EntryPoint.DeclaringType);
 
-            foreach (var typeDef in allTypes.Where(t => t.IsPublic))
+            foreach (TypeDefinition typeDef in allTypes.Where(t => t.IsPublic || InheritsFrom(t, SysAttributeName)))
                 AddScanType(typeDef);
 
             if (!string.IsNullOrEmpty(KeepTypes))
@@ -71,7 +73,7 @@ namespace GK
 
             var removeTypeCount = 0;
             
-            foreach (var typeDef in allTypes.Where(t => SafeToRemove(t) && !_typeIdsFound.Contains(t.FullName)).ToList())
+            foreach (var typeDef in allTypes.Where(t => !_typeIdsFound.Contains(t.FullName)).ToList())
             {
                 if (Verbose >= 2) LogLine("Removing: {0}", typeDef);
                 allTypes.Remove(typeDef);
@@ -140,15 +142,6 @@ namespace GK
             assembly.Write(OutputFileName, new WriterParameters { WriteSymbols = readWriteSymbols });
 
             LogLine("Done.");
-
-            return true;
-        }
-
-        private bool SafeToRemove(TypeDefinition typeDef)
-        {
-            // never remove attributes
-            if (InheritsFrom(typeDef, typeof(Attribute).FullName))
-                return false;
 
             return true;
         }
