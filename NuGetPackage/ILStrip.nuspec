@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>ILStrip</id>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <authors>Glück &amp; Kanja Consulting AG</authors>
     <licenseUrl>http://www.gnu.org/licenses/gpl.html</licenseUrl>
     <projectUrl>https://github.com/glueckkanja/ILStrip</projectUrl>
